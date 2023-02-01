@@ -42,7 +42,6 @@
         </button>
       </div>
       <div class="modal-body">
-
   <form>
 
   <div class="form-row">
@@ -57,16 +56,16 @@
     </div>
   </div>
 </form>
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal(event)"
             >Close</button>
-        <button type="button" class="btn btn-primary" onclick="updateData()" >Save changes</button>
+        <button type="button" class="btn btn-primary" onclick="updateData(),closeModal(event)" >Save changes</button>
       </div>
     </div>
   </div>
 </div>
+<button type="button" class="btn btn-primary" onclick="deleteData()">Delete</button>
 </body>
 </html>
 <script>
@@ -79,7 +78,16 @@ $.ajax({
     success:function(company_product){
         for(i=0;i<company_product.length;i++)
         {
-        output += `<tr><th scope="row"><div class="form-check"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div></th></th><td>${company_product[i].name}</td><td>${company_product[i].ceo_name}</td><td><button onclick=getCompanyData(${company_product[i].id},openModal(event))>Update</button></td></tr>`;
+        output += `<tr>
+            <th scope="row">
+                <div class="form-check">
+                    <input name="compony[]" class="form-check-input chk-companies" type="checkbox" value="${company_product[i].id}" id="flexCheckDefault">
+                </div>
+            </th>
+            <td>${company_product[i].name}</td>
+            <td>${company_product[i].ceo_name}</td>
+            <td><button onclick=getCompanyData(${company_product[i].id},openModal(event))>Update</button></td>
+            </tr>`;
         }
     $("#tbody").html(output);
     }
@@ -117,10 +125,10 @@ function getCompanyData(id){
     }
 
 
-
 function updateData(){
     var token = "{{csrf_token }}";
     var id = $("#idCompany").val();
+    console.log(id,"??????")
     $.ajax({
         type:'PUT',
         url:`/api/company/update/${id}/`,
@@ -131,4 +139,28 @@ function updateData(){
     }
     });
     }
+
+
+function deleteData(){
+    var token = "{{csrf_token }}";
+
+    let ids = [];
+
+    $('input[name="compony[]"]:checked').each(function() {
+       ids.push(this.value);
+    });
+
+   console.log(ids)
+
+    $.ajax({
+        type:'DELETE',
+        url:`/api/company/delete/`,
+        headers: { "X-CSRFToken": token },
+        data:{"ids":ids},
+        success:function(company){
+            console.log("deleted Successfully")
+    }
+    });
+
+}
 </script>

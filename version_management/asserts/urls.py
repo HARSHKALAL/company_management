@@ -11,7 +11,12 @@ urlpatterns = [
     path("api/company/", CompanyApi.as_view({"get":"list"}), name='CompanyApi'),
     path("api/company/retrieve/<int:pk>/", CompanyApi.as_view({"post": "retrieve"}), name='CompanyApi'),
     path("api/company/update/<int:pk>/", CompanyApi.as_view({"put": "update"}), name='CompanyApi'),
-    path("api/car/", CarApi.as_view(), name='CarApi'),
+    path("api/company/delete/", CompanyApi.as_view({'': ''}), name='CompanyApi'),
+
+    path("api/car/", CarApi.as_view({"get": "list"}), name='CarApi'),
+    path("api/car/retrieve/<int:pk>/", CarApi.as_view({"post": "retrieve"}), name='CarApi'),
+    path("api/car/update/<int:pk>/", CarApi.as_view({"put": "update"}), name='CarApi'),
+
     path("api/audit_log/", AuditLogViewSet.as_view({'post': 'list'}), name='AuditLogViewSet'),
 
 

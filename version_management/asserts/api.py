@@ -11,16 +11,6 @@ class CompanyApi(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
 
-    def retrieve(self, request, *args, **kwargs):
-        if self.kwargs['pk'] is not None:
-            instance = self.queryset.get(id=self.kwargs['pk'])
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
-        else:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
-
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
@@ -35,6 +25,11 @@ class CompanyApi(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
     # def post(self, request, *args, **kwargs):
@@ -44,9 +39,24 @@ class CompanyApi(viewsets.ModelViewSet):
     #         create_audit_log_of_company(compnay_obj.id)
     #     return self.create(request, *args, **kwargs)
 
-class CarApi(generics.ListCreateAPIView):
+
+class CarApi(viewsets.ModelViewSet):
     serializer_class = CarSerializer
     queryset = Car.objects.all()
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+        return Response(serializer.data)
+
 
 
 class AuditLogViewSet(viewsets.ModelViewSet):

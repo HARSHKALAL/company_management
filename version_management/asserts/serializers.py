@@ -15,7 +15,7 @@ class CarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Car
-        fields = ("id", "name", "company", "company_name", "color", "mileage", "unit", "price", "launch_year")
+        fields = ("id", "name",  "company_name", "color", "mileage", "unit", "price", "launch_year")
 
     @staticmethod
     def get_company_name(instance):
