@@ -86,7 +86,7 @@ $.ajax({
             </th>
             <td>${company_product[i].name}</td>
             <td>${company_product[i].ceo_name}</td>
-            <td><button onclick=getCompanyData(${company_product[i].id},openModal(event))>Update</button></td>
+            <td><button onclick=getCompanyData(${company_product[i].id},createLog(${company_product[i].id}),openModal(event))>Update</button></td>
             </tr>`;
         }
     $("#tbody").html(output);
@@ -110,7 +110,6 @@ function getCompanyData(id){
     console.log(id,"Id get Successfully")
     var token = "{{csrf_token }}";
     $("#idCompany").val(id);
-
     $.ajax({
         type:'POST',
         url:`/api/company/retrieve/${id}/`,
@@ -123,7 +122,6 @@ function getCompanyData(id){
     }
     });
     }
-
 
 function updateData(){
     var token = "{{csrf_token }}";
@@ -140,27 +138,34 @@ function updateData(){
     });
     }
 
-
 function deleteData(){
     var token = "{{csrf_token }}";
-
     let ids = [];
-
     $('input[name="compony[]"]:checked').each(function() {
        ids.push(this.value);
     });
-
-   console.log(ids)
-
     $.ajax({
         type:'DELETE',
-        url:`/api/company/delete/`,
+        url:`/api/company/delete/${ids[0]}/`,
         headers: { "X-CSRFToken": token },
-        data:{"ids":ids},
+     dataType : "json",
+        data: {"ids":ids},
         success:function(company){
             console.log("deleted Successfully")
     }
     });
+}
 
+function createLog(id){
+    var token = "{{csrf_token }}";
+    console.log(id,"log")
+    $.ajax({
+        type:'GET',
+        url:`/api/company/create/${id}/`,
+        headers: { "X-CSRFToken": token },
+        success:function(log){
+            console.log(log)
+    }
+    });
 }
 </script>

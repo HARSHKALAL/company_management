@@ -30,6 +30,13 @@ class AuditLogSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
+
+
+
+
     # def get_content_type_id(self, instance):
         # app_label_query = ContentType.objects.get_for_id(instance.content_type_id)
         # return instance.content_type_id.model
