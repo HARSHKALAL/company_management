@@ -15,6 +15,5 @@ urlpatterns = [
     path("api/car/", CarApi.as_view({"get": "list"}), name='CarApi'),
     path("api/car/retrieve/<int:pk>/", CarApi.as_view({"post": "retrieve"}), name='CarApi'),
     path("api/car/update/<int:pk>/", CarApi.as_view({"put": "update"}), name='CarApi'),
-    # path("api/company/create/<int:pk>/", AuditLogViewSet.as_view(), name='AuditLogViewSet'),
 
 ]

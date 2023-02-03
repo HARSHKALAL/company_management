@@ -9,7 +9,6 @@
             rel="stylesheet"
     />
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -29,8 +28,6 @@
     </tbody>
 </table>
 
-
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -43,7 +40,6 @@
       </div>
       <div class="modal-body">
   <form>
-
   <div class="form-row">
     <div class="col">
       <input id="companyName" type="text" class="form-control" placeholder="Company Name" value="{{company_product.name}}">
@@ -52,7 +48,6 @@
     <div class="col">
       <input id="ceoName" type="text" class="form-control" placeholder="Ceo Name">
       <input id="idCompany" type="hidden" class="form-control" placeholder="Ceo Name">
-
     </div>
   </div>
 </form>
@@ -69,7 +64,6 @@
 </body>
 </html>
 <script>
-
 function companyList(){
 output = " "
 $.ajax({
@@ -86,7 +80,7 @@ $.ajax({
             </th>
             <td>${company_product[i].name}</td>
             <td>${company_product[i].ceo_name}</td>
-            <td><button onclick=getCompanyData(${company_product[i].id},createLog(${company_product[i].id}),openModal(event))>Update</button></td>
+            <td><button onclick=getCompanyData(${company_product[i].id},openModal(event))>Update</button></td>
             </tr>`;
         }
     $("#tbody").html(output);
@@ -115,7 +109,6 @@ function getCompanyData(id){
         url:`/api/company/retrieve/${id}/`,
         headers: { "X-CSRFToken": token },
         success:function(company){
-
             $("#companyName").val(company.name);
             $("#ceoName").val(company.ceo_name);
 
@@ -133,7 +126,7 @@ function updateData(){
         headers: { "X-CSRFToken": token },
         data:{"name":$("#companyName").val(),"ceo_name":$("#ceoName").val()},
         success:function(company){
-            console.log(company)
+        console.log(company)
     }
     });
     }
@@ -148,23 +141,10 @@ function deleteData(){
         type:'DELETE',
         url:`/api/company/delete/${ids[0]}/`,
         headers: { "X-CSRFToken": token },
-     dataType : "json",
+        dataType : "json",
         data: {"ids":ids},
         success:function(company){
-            console.log("deleted Successfully")
-    }
-    });
-}
-
-function createLog(id){
-    var token = "{{csrf_token }}";
-    console.log(id,"log")
-    $.ajax({
-        type:'GET',
-        url:`/api/company/create/${id}/`,
-        headers: { "X-CSRFToken": token },
-        success:function(log){
-            console.log(log)
+        console.log("deleted Successfully")
     }
     });
 }
