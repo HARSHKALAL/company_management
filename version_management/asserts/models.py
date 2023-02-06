@@ -33,7 +33,7 @@ class AuditLog(models.Model):
     object_id = models.PositiveIntegerField(null=True)
     log_message = models.CharField(max_length=500)
     # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    ip_address = models.CharField(max_length=35,null=True)
+    ip_address = models.CharField(max_length=35, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=False)
 
@@ -41,3 +41,6 @@ class AuditLog(models.Model):
         hostname = socket.gethostname()
         self.ip_address = socket.gethostbyname(hostname)
         super(AuditLog, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.log_message
