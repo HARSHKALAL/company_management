@@ -122,8 +122,26 @@
             </button>
           </div>
           <div class="modal-body">
-            <p id="old">OLD :</p>
-            <p id="new">NEW :</p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Changes</th>
+                  <th scope="col">Company Name</th>
+                  <th scope="col">Ceo Name</th>
+                </tr>
+              </thead>
+              <tbody id="modify">
+                <tr> 
+                <td>OLD</td>
+                <td id="old"></td>              
+              </tr>
+              <tr>
+                <td>NEW</td>               
+                <td id="new"></td>
+                
+              </tr>                
+              </tbody>
+            </table>
           </div>
           <div class="modal-footer">
             <button
@@ -175,7 +193,7 @@
             </tr>`;
         }
         $("#tbody").html(output);
-        test();
+        // test();
       },
     });
   }
@@ -219,18 +237,32 @@
     $.ajax({
       type: "PUT",
       url: `/api/company/update/${id}/`,
-      headers: { "X-CSRFToken": token },
+      headers: { "X-CSRFToken": token },	
       data: { name: $("#companyName").val(), ceo_name: $("#ceoName").val() },
       success: function (company) {},
     });
   }
+  var ids = [];
+
+  $(document).on('change', '.chk-companies', function (e) {
+    var val = $(this).val();
+    if($(this).is(":checked")) {
+      ids.push(val);
+    // } else {
+    //   $.grep(ids, function(value) {
+    //     return value != val;
+    //   })
+    }
+
+  })
 
   function deleteData() {
     var token = "{{csrf_token }}";
-    let ids = [];
-    $('input[name="compony[]"]:checked').each(function () {
-      ids.push(this.value);
-    });
+
+    if(!ids.lenght) {
+      return;
+    }
+    
     $.ajax({
       type: "DELETE",
       url: `/api/company/delete/${ids[0]}/`,
@@ -241,44 +273,44 @@
     });
   }
 
-  function test() {
-    const selectElement = document.querySelector(".compony-check");
-    selectElement.addEventListener("change", (event) => {
-      console.log(event, "event");
-      if (event.target.checked) {
-        if (selectedIds[0] == null) {
-          selectedIds[1] = event.target.defaultValue;
-        } else {
-          selectedIds[0] = event.target.defaultValue;
-        }
-      } else {
-        selectedIds.splice(event.target.defaultValue, 1);
-      }
-    });
-  }
-
-  function differenceData() {
-    console.log(allCompaniesData, selectedIds);
-    ids = { 0: null, 1: null };
-    $('input[name="compony[]"]:checked').each(function (index, el) {
-      ids[index] = el.value;
-    });
-
-    console.log(ids, "????????????");
-
-    if (ids.length != 2) {
-      alert("Only two can be differentiate");
+  function differenceData() {           
+    if(!ids.length) {
       return;
     }
+    
+    if(ids.length !=2 ){
+        alert("Please Select Two checkbox")  
+    }
 
-    console.log(ids);
+    firstId=allCompaniesData.filter((data) => data.id == parseInt(ids[0]))[0];
+    secondId=allCompaniesData.filter((data) => data.id == parseInt(ids[1]))[0];
 
-    firstData = allCompaniesData.filter((row) => row.id == parseInt(ids[0]))[0];
-    secondData = allCompaniesData.filter(
-      (row) => row.id == parseInt(ids[1])
-    )[0];
-    console.log("firstData", firstData);
-    console.log("secondData", secondData);
-    return;
+    let firstIdKeys = Object.keys(firstId)
+    let firstIdValues = Object.values(firstId)
+    let secondIdKeys = Object.keys(secondId)
+    let secondIdValues = Object.values(secondId)    
+    outputDataOld = " "  
+    outputDataNew = " "  
+
+    for(i=1;i<firstIdValues.length;i++){            
+      if(firstIdValues[i] == secondIdValues[i]){
+          console.log(firstIdValues[i],"????????") 
+          outputDataOld += `<td>${firstIdValues[i]}</td>`
+          outputDataNew += `<td>${secondIdValues[i]}</td>`            
+        }
+      else{          
+          document.getElementById("old").innerHTML = `OLD: ${firstIdValues[i]}` 
+          document.getElementById("old").style.color = 'red'
+          document.getElementById("new").innerHTML = `NEW: ${secondIdValues[i]}`
+          document.getElementById("new").style.color = 'green'
+        }
+    }
+    $("#old").html(outputDataOld);      
+    $("#new").html(outputDataNew);          
   }
+    
+  
+
+    
+  
 </script>
