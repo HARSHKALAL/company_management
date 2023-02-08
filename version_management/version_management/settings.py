@@ -3,7 +3,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-giwe!j+bcefmcivl(=0100m%o25&vjnn+m)^6%!s2)*1s!b8i7'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -74,4 +74,17 @@ USE_TZ = True
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS: True
+# CORS_ALLOW_ALL_ORIGINS: True
+CORS_ALLOWED_ORIGINS = [
+    "http://192.168.0.62",
+    "http://192.168.0.64",
+
+]
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]

@@ -115,7 +115,7 @@ function carList(){
 output = " "
 $.ajax({
     type: 'GET',
-    url: 'http://127.0.0.1:8000/api/car/',
+    url: '/api/car/',
     success:function(carList){
      for(i=0;i<carList.length;i++)
         {

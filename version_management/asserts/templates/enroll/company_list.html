@@ -131,17 +131,16 @@
                 </tr>
               </thead>
               <tbody id="modify">
-                <tr> 
+                <tr id="old"> 
                 <td>OLD</td>
-                <td id="old"></td>              
               </tr>
-              <tr>
-                <td>NEW</td>               
-                <td id="new"></td>
-                
+              <tr id="new">
+                <td>NEW</td>                                         
               </tr>                
               </tbody>
             </table>
+          <p id="o"></p>
+          <p id="n"></p>
           </div>
           <div class="modal-footer">
             <button
@@ -177,7 +176,7 @@
     output = " ";
     $.ajax({
       type: "GET",
-      url: "http://127.0.0.1:8000/api/company/",
+      url: "/api/company/",
       success: function (company_product) {
         allCompaniesData = company_product;
         for (i = 0; i < company_product.length; i++) {
@@ -193,7 +192,6 @@
             </tr>`;
         }
         $("#tbody").html(output);
-        // test();
       },
     });
   }
@@ -203,6 +201,7 @@
     e.preventDefault();
     var myModal = $("#exampleModal").modal("hide");
     var myModal = $("#modal").modal("hide");
+    location.reload()
   }
 
   function openModal(e) {
@@ -239,7 +238,9 @@
       url: `/api/company/update/${id}/`,
       headers: { "X-CSRFToken": token },	
       data: { name: $("#companyName").val(), ceo_name: $("#ceoName").val() },
-      success: function (company) {},
+      success: function (company) {
+        location.reload()
+      },
     });
   }
   var ids = [];
@@ -248,32 +249,27 @@
     var val = $(this).val();
     if($(this).is(":checked")) {
       ids.push(val);
-    // } else {
-    //   $.grep(ids, function(value) {
-    //     return value != val;
-    //   })
     }
-
   })
 
   function deleteData() {
     var token = "{{csrf_token }}";
-
-    if(!ids.lenght) {
-      return;
-    }
-    
+    console.log(ids,"deleteData")
     $.ajax({
       type: "DELETE",
       url: `/api/company/delete/${ids[0]}/`,
       headers: { "X-CSRFToken": token },
       dataType: "json",
       data: { ids: ids },
-      success: function (company) {},
+      success: function (company) {
+        location.reload()
+      },
+      
     });
   }
 
   function differenceData() {           
+  
     if(!ids.length) {
       return;
     }
@@ -285,32 +281,54 @@
     firstId=allCompaniesData.filter((data) => data.id == parseInt(ids[0]))[0];
     secondId=allCompaniesData.filter((data) => data.id == parseInt(ids[1]))[0];
 
-    let firstIdKeys = Object.keys(firstId)
     let firstIdValues = Object.values(firstId)
-    let secondIdKeys = Object.keys(secondId)
-    let secondIdValues = Object.values(secondId)    
+    let secondIdValues = Object.values(secondId)        
+    
+
     outputDataOld = " "  
     outputDataNew = " "  
 
-    for(i=1;i<firstIdValues.length;i++){            
-      if(firstIdValues[i] == secondIdValues[i]){
-          console.log(firstIdValues[i],"????????") 
-          outputDataOld += `<td>${firstIdValues[i]}</td>`
-          outputDataNew += `<td>${secondIdValues[i]}</td>`            
-        }
-      else{          
-          document.getElementById("old").innerHTML = `OLD: ${firstIdValues[i]}` 
-          document.getElementById("old").style.color = 'red'
-          document.getElementById("new").innerHTML = `NEW: ${secondIdValues[i]}`
-          document.getElementById("new").style.color = 'green'
-        }
-    }
-    $("#old").html(outputDataOld);      
-    $("#new").html(outputDataNew);          
-  }
     
-  
+    var oldList=" "
+    var newList=" "
 
-    
-  
+    for(i=1;i<firstIdValues.length;i++){       
+      if(firstIdValues[i].length == secondIdValues[i].length){
+        if(firstIdValues[i]==secondIdValues[i]){
+          outputDataOld += `<td>${firstIdValues[i]}</td>`
+          outputDataNew += `<td>${secondIdValues[i]}</td>`         
+        }
+        else{
+          if(firstIdValues[i].toLowerCase()==secondIdValues[i].toLowerCase()){
+            console.log("string match but cases does not match")                               
+            for(j=0;j<firstIdValues[i].length;j++){              
+              if(firstIdValues[i][j]==secondIdValues[i][j]){ 
+                    oldList += `${firstIdValues[i][j]}`
+                    newList += `${secondIdValues[i][j]}`                                      
+                  }
+                  else{
+                    oldList += `<span style="color:red">${firstIdValues[i][j]}</span>`
+                    newList += `<span style="color:green">${secondIdValues[i][j]}</span>`                                                                          
+                  }   
+            }
+
+            outputDataOld += `<td>${oldList}</td>` 
+            outputDataNew += `<td>${newList}</td>` 
+            oldList = " "
+            newList = " "
+          }
+          else{
+            outputDataOld += `<td style="color:red">${firstIdValues[i]}</td>`     
+            outputDataNew += `<td style="color:green">${secondIdValues[i]}</td>`  
+          }
+        }
+      }
+      else{
+        outputDataOld += `<td style="color:red">${firstIdValues[i]}</td>`     
+        outputDataNew += `<td style="color:green">${secondIdValues[i]}</td>`
+      }
+      }        
+    $("#old").append(outputDataOld);      
+    $("#new").append(outputDataNew);         
+    }
 </script>
